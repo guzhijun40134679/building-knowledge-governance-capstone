@@ -302,9 +302,11 @@ For a capstone submission, the test suite should be expanded to cover API author
 
 ## Sample Data
 
-The shareable English copy intentionally contains no real Welcome Letters, customer records, building-contact lists, OCR reports, uploads, or databases. The **test_data/** directory contains a policy note only.
+The shareable English copy intentionally contains no real Welcome Letters, customer records, building-contact lists, OCR reports, uploads, or databases.
 
-Students should create a small synthetic or explicitly sanitized evaluation set. Historical material can be imported in an approved private environment through the application or **POST /bootstrap/legacy**; it must not be copied into a classroom repository without authorization.
+The **test_data/welcome_letters/** directory contains two clearly labeled, fully fictional Welcome Letters in Markdown and PDF form. Import the January fixture first and the June update second to exercise structured extraction, evidence capture, unchanged-field handling, conflict detection, and human approval.
+
+Additional fixtures must be synthetic or explicitly sanitized. Historical material can be imported only in an approved private environment through the application or **POST /bootstrap/legacy**; it must not be copied into a classroom repository without authorization.
 
 ## Selected API Areas
 
