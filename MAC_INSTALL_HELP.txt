@@ -1,0 +1,14 @@
+MACOS INSTALL HELP
+
+If macOS blocks install.command after the project was downloaded:
+
+1. Copy the entire project folder to a writable location. If it is inside a DMG, copy it out of the DMG first.
+2. In Finder, Control-click install.command and choose Open. Confirm Open again if macOS asks.
+3. If the file is still blocked, open Terminal, type the following command with a trailing space, drag the project folder into the Terminal window, and press Return:
+
+   xattr -dr com.apple.quarantine
+
+4. Make the launchers executable in Terminal by typing `chmod +x `, dragging install.command and start.command into the window, and pressing Return.
+5. Run install.command. After installation, use start.command.
+
+Do not disable Gatekeeper globally and do not run the project as root.

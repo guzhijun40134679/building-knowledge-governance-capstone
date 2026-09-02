@@ -1,0 +1,3 @@
+I first need the electricity service area. Please reply `New Jersey / NJ` or `Manhattan`.
+The service area is still missing. Reply `NJ` or `Manhattan` so I can continue.
+Please confirm the area by replying `New Jersey` or `Manhattan`.

@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Local Architecture for Building Knowledge Governance and CRM",
+    "locale": "en",
+    "output": "whitepaper-system-architecture.html",
+    "quality_profile": "showcase"
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [44, 86],
+    "cols": 6,
+    "gapX": 45,
+    "gapY": 40,
+    "cellW": 176,
+    "cellH": 72
+  },
+  "components": [
+    {
+      "id": "internal_roles",
+      "type": "external",
+      "label": "Internal Users",
+      "sublabel": "four roles",
+      "row": 1,
+      "col": 0,
+      "size": [170, 72]
+    },
+    {
+      "id": "react_console",
+      "type": "frontend",
+      "label": "React + Vite Console",
+      "sublabel": "CRM · knowledge · admin",
+      "row": 1,
+      "col": 1,
+      "size": [176, 72]
+    },
+    {
+      "id": "fastapi_app",
+      "type": "backend",
+      "label": "FastAPI / Uvicorn",
+      "sublabel": "REST · upload · jobs",
+      "tag": ":8000",
+      "row": 1,
+      "col": 2,
+      "size": [176, 72]
+    },
+    {
+      "id": "security_layer",
+      "type": "security",
+      "label": "Auth, RBAC & Audit",
+      "sublabel": "sessions · roles · audit",
+      "tag": "server-enforced",
+      "row": 1,
+      "col": 3,
+      "size": [176, 72]
+    },
+    {
+      "id": "knowledge_domain",
+      "type": "backend",
+      "label": "Knowledge Governance",
+      "sublabel": "ingest · review · query",
+      "row": 1,
+      "col": 4,
+      "size": [176, 72]
+    },
+    {
+      "id": "sqlite_runtime",
+      "type": "database",
+      "label": "SQLite Runtime Store",
+      "sublabel": "fact mirror + operations",
+      "tag": "whitepaper.db",
+      "row": 1,
+      "col": 5,
+      "size": [176, 72]
+    },
+    {
+      "id": "excel_truth",
+      "type": "database",
+      "label": "Excel Sources of Truth",
+      "sublabel": "Master + Staging Excel",
+      "tag": "two-way sync",
+      "row": 0,
+      "col": 5,
+      "size": [176, 72]
+    },
+    {
+      "id": "intake_pipeline",
+      "type": "backend",
+      "label": "Document Intake",
+      "sublabel": "files → candidate facts",
+      "tag": "BackgroundTasks",
+      "row": 2,
+      "col": 3,
+      "size": [176, 72]
+    },
+    {
+      "id": "crm_domain",
+      "type": "backend",
+      "label": "Case & Service Ops",
+      "sublabel": "cases · services · tasks",
+      "row": 2,
+      "col": 5,
+      "size": [176, 72]
+    },
+    {
+      "id": "source_archive",
+      "type": "database",
+      "label": "Source Files & Evidence",
+      "sublabel": "originals · OCR · evidence",
+      "row": 2,
+      "col": 2,
+      "size": [176, 72]
+    },
+    {
+      "id": "model_services",
+      "type": "cloud",
+      "label": "Optional Model & OCR Services",
+      "sublabel": "DeepSeek / Vision / OCR",
+      "tag": "graceful fallback",
+      "row": 3,
+      "col": 4,
+      "size": [188, 72]
+    },
+    {
+      "id": "daemon_supervisor",
+      "type": "security",
+      "label": "launchd Health Supervisor",
+      "sublabel": "process + /health recovery",
+      "tag": "every 15 seconds",
+      "row": 0,
+      "col": 2,
+      "size": [176, 72]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Single Mac: localhost or trusted LAN boundary",
+      "wraps": [
+        "react_console",
+        "fastapi_app",
+        "security_layer",
+        "knowledge_domain",
+        "sqlite_runtime",
+        "excel_truth",
+        "intake_pipeline",
+        "crm_domain",
+        "source_archive",
+        "daemon_supervisor"
+      ],
+      "pad": 22
+    },
+    {
+      "kind": "security-group",
+      "label": "Server authorization and data-access boundary",
+      "wraps": [
+        "security_layer",
+        "knowledge_domain",
+        "sqlite_runtime",
+        "intake_pipeline",
+        "crm_domain"
+      ],
+      "pad": 14
+    }
+  ],
+  "connections": [
+    { "id": "role_opens_console", "from": "internal_roles", "to": "react_console", "variant": "emphasis" },
+    { "id": "console_calls_api", "from": "react_console", "to": "fastapi_app" },
+    { "id": "api_enforces_security", "from": "fastapi_app", "to": "security_layer", "variant": "security" },
+    { "id": "security_routes_knowledge", "from": "security_layer", "to": "knowledge_domain" },
+    { "id": "knowledge_reads_runtime", "from": "knowledge_domain", "to": "sqlite_runtime", "label": "SQL" },
+    { "id": "excel_rebuilds_mirror", "from": "excel_truth", "to": "sqlite_runtime", "label": "source-of-truth mirror", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "labelAt": [1237, 172] },
+    { "id": "security_routes_intake", "from": "security_layer", "to": "intake_pipeline", "label": "document intake", "labelAt": [795, 286] },
+    { "id": "intake_to_knowledge", "from": "intake_pipeline", "to": "knowledge_domain", "label": "review candidates" },
+    { "id": "intake_archives_sources", "from": "intake_pipeline", "to": "source_archive", "variant": "dashed" },
+    { "id": "intake_calls_models", "from": "intake_pipeline", "to": "model_services", "label": "OCR / extraction", "variant": "dashed" },
+    { "id": "knowledge_optional_explanation", "from": "knowledge_domain", "to": "model_services", "label": "optional explanation", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
+    { "id": "knowledge_creates_crm", "from": "knowledge_domain", "to": "crm_domain", "label": "building snapshot" },
+    { "id": "crm_persists_operations", "from": "crm_domain", "to": "sqlite_runtime", "label": "tasks / communications" },
+    { "id": "daemon_checks_api", "from": "daemon_supervisor", "to": "fastapi_app", "label": "/health", "variant": "security", "labelAt": [574, 172] }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Data Authority",
+      "items": [
+        "Master and Staging Excel workbooks are the sources of truth for building facts",
+        "SQLite mirrors building facts and stores CRM, review, session, and audit data"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Governance Boundary",
+      "items": [
+        "AI and employees can propose candidates but cannot write directly to Master",
+        "admin or super_admin may approve Staging; only super_admin may approve Master"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Answers and Operations",
+      "items": [
+        "Queries return database facts first; model explanations are optional",
+        "Cases bind building snapshots and drive services, tasks, and knowledge feedback"
+      ]
+    }
+  ]
+}

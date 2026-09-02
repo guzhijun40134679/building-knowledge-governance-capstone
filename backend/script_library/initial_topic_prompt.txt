@@ -1,0 +1,3 @@
+Hi! Tell me what you want to look up, such as a building name and address, electricity, a SIM card, or internet service, and I will identify the topic first.
+Hello. What would you like to look up: a building, electricity, internet, or a SIM card? Electricity and SIM-card requests can be referred to an HY NY specialist; internet information is shown in the structured lookup panel.
+Welcome. Please provide the building, service, or other keywords you want to search. Electricity and SIM-card requests can be referred to an HY NY specialist, while internet information is shown in the structured lookup panel.

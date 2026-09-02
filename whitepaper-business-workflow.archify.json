@@ -1,0 +1,87 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Building Knowledge Governance and Move-In Support Loop",
+    "locale": "en",
+    "output": "whitepaper-business-workflow.html",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    { "id": "intake_lane", "label": "Document Intake and System Processing" },
+    { "id": "governance_lane", "label": "Human Review and Trusted Data" },
+    { "id": "service_lane", "label": "CRM and Customer Support" }
+  ],
+  "phases": [
+    { "id": "capture_phase", "label": "Capture and Parse", "fromCol": 0, "toCol": 0 },
+    { "id": "governance_phase", "label": "Quality Gate and Staging", "fromCol": 1, "toCol": 2, "variant": "emphasis" },
+    { "id": "trust_phase", "label": "Master and Service Operations", "fromCol": 3, "toCol": 4, "variant": "security" }
+  ],
+  "groups": [
+    { "id": "evidence_group", "label": "Originals, Evidence, and Candidates", "lane": "intake_lane", "fromCol": 0, "toCol": 1, "variant": "dashed" },
+    { "id": "staging_group", "label": "Staged Facts and Promotion Preparation", "lane": "governance_lane", "fromCol": 2, "toCol": 2, "variant": "emphasis" },
+    { "id": "master_gate_group", "label": "Final Master Gate", "lane": "governance_lane", "fromCol": 3, "toCol": 4, "variant": "security" }
+  ],
+  "mainPath": [
+    "source_archive",
+    "quality_gate",
+    "admin_review",
+    "staging_store",
+    "master_review",
+    "master_store",
+    "crm_delivery"
+  ],
+  "semanticChecks": {
+    "requiredPaths": [
+      { "from": "source_archive", "to": "staging_store" },
+      { "from": "staging_store", "to": "master_store" },
+      { "from": "master_store", "to": "crm_delivery" }
+    ]
+  },
+  "nodes": [
+    { "id": "source_archive", "lane": "intake_lane", "col": 0, "type": "backend", "label": "Submit, Archive, and Parse", "sublabel": "originals · files · OCR", "tag": "rules / AI", "width": 184 },
+    { "id": "quality_gate", "lane": "intake_lane", "col": 1, "type": "security", "label": "Evidence Quality Gate", "sublabel": "confidence · conflicts · gaps", "tag": "candidates only", "width": 160 },
+    { "id": "admin_review", "lane": "governance_lane", "col": 1, "type": "security", "label": "First-Level Review", "sublabel": "approve · reject · clarify", "tag": "admin / super_admin", "width": 160 },
+    { "id": "staging_store", "lane": "governance_lane", "col": 2, "type": "database", "label": "Staging & Promotion", "sublabel": "Excel + SQLite mirror", "tag": "queryable / editable", "width": 166 },
+    { "id": "master_review", "lane": "governance_lane", "col": 3, "type": "security", "label": "Super Admin Final Review", "sublabel": "conflict-free + verified", "tag": "Master gate", "width": 166 },
+    { "id": "master_store", "lane": "governance_lane", "col": 4, "type": "database", "label": "Master and Query Mirror", "sublabel": "Excel + SQLite mirror", "tag": "trusted facts", "width": 166 },
+    { "id": "crm_delivery", "lane": "service_lane", "col": 4, "type": "backend", "label": "Case Support Workspace", "sublabel": "snapshot → tasks → feedback", "tag": "status only", "width": 172 }
+  ],
+  "edges": [
+    { "id": "source_to_quality", "from": "source_archive", "to": "quality_gate", "role": "main", "variant": "dashed" },
+    { "id": "quality_to_admin", "from": "quality_gate", "to": "admin_review", "role": "main", "variant": "security", "route": "straight", "fromSide": "bottom", "toSide": "top" },
+    { "id": "admin_return", "from": "admin_review", "to": "source_archive", "label": "reject / revise", "role": "return", "variant": "dashed", "route": "return-left", "fromSide": "left", "toSide": "left", "channelX": 34 },
+    { "id": "admin_to_staging", "from": "admin_review", "to": "staging_store", "label": "approve", "role": "main", "variant": "emphasis" },
+    { "id": "staging_to_master", "from": "staging_store", "to": "master_review", "label": "promote", "role": "main", "variant": "security" },
+    { "id": "master_return", "from": "master_review", "to": "staging_store", "label": "conflict / weak evidence", "role": "return", "variant": "dashed", "route": "bottom-channel", "fromSide": "bottom", "toSide": "bottom" },
+    { "id": "master_to_store", "from": "master_review", "to": "master_store", "label": "approve", "role": "main", "variant": "emphasis" },
+    { "id": "store_to_crm", "from": "master_store", "to": "crm_delivery", "role": "main", "route": "straight", "fromSide": "bottom", "toSide": "top" },
+    { "id": "feedback_loop", "from": "crm_delivery", "to": "source_archive", "label": "feedback to review; never directly to Master", "role": "return", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Governance Boundary",
+      "items": [
+        "AI and employees may create candidates or explanations but cannot write to Master",
+        "Unresolved conflicts block approval; missing direct evidence requires documented human verification"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Permission Gates",
+      "items": [
+        "admin or super_admin approves entry into Staging",
+        "Only super_admin may grant final approval into Master"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Support Loop",
+      "items": [
+        "Queries return database facts first; AI explanation is an optional enhancement",
+        "Case communications may return to review; current notifications only mark status and do not send through WeChat"
+      ]
+    }
+  ]
+}

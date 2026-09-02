@@ -1,0 +1,3 @@
+Which area is the electricity account for? Please confirm `New Jersey (NJ)` or `Manhattan`.
+To give you the correct steps, please first confirm the service area: `New Jersey / NJ` or `Manhattan`.
+I can help with electricity setup. First, please confirm the area: `New Jersey` or `Manhattan`.

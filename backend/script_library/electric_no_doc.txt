@@ -1,0 +1,3 @@
+The area was received, but no matching electricity material was found. Check that the `electric` directory contains the appropriate NJ or Manhattan reference, then refresh the library.
+The area was received, but the current library has no matching electricity document. Check the `electric` directory and refresh.
+No electricity material matches this area. Add the required file to the `electric` directory, refresh, and try again.
